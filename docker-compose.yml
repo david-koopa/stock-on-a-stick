@@ -1,0 +1,25 @@
+services:
+  mysql-db:
+    image: mysql:8.4.3
+    env_file: ./.env
+    environment:
+      - MYSQLDB_HOST=mysql-db
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+      - MYSQL_DOCKER_PORT=$MYSQLDB_DOCKER_PORT
+    ports:
+      - 3307:$MYSQLDB_DOCKER_PORT
+  
+  api:
+    depends_on:
+      - mysql-db
+    build: ./api
+    env_file: ./.env
+    ports:
+      - 8080:8080
+    environment:
+      - MYSQLDB_HOST=mysql-db
+      - MYSQLDB_USER=$MYSQLDB_USER
+      - MYSQLDB_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQLDB_DATABASE=$MYSQLDB_DATABASE
+      - MYSQLDB_DOCKER_PORT=$MYSQLDB_DOCKER_PORT
