@@ -35,11 +35,11 @@ docker compose up -d
 Browse to `http://localhost:8888/`.
 
 ### API routes
-GET - localhost:6868/user (get list of current users)
-POST - localhost:6868/user (create single user)
+- GET - localhost:6868/user (get list of current users)
+- POST - localhost:6868/user (create single user)
 
 ### Webapp routes
-localhost:8888 (home)
+- http://localhost:8888 (home)
 
 ### Access MySQL from Docker
 Bash into container or user Docker Desktop. Access stock_db with `mysql` command (password is whatever you set in .env). Password is whatever you set in .env file.
