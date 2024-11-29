@@ -5,6 +5,7 @@ const cors = require("cors");
 const db = require("./app/models");
 const app = express();
 
+// TODO clean up finnhub POC
 const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.FINNHUB_TOKEN}`);
 
 // Connection opened -> Subscribe
