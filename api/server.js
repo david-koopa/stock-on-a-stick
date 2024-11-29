@@ -5,6 +5,25 @@ const cors = require("cors");
 const db = require("./app/models");
 const app = express();
 
+const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.FINNHUB_TOKEN}`);
+
+// Connection opened -> Subscribe
+socket.addEventListener('open', function (event) {
+    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AAPL'}))
+    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'NVDA'}))
+    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'HD'}))
+});
+
+// Listen for messages
+socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});
+
+// Unsubscribe
+ var unsubscribe = function(symbol) {
+    socket.send(JSON.stringify({'type':'unsubscribe','symbol': symbol}))
+}
+
 var corsOptions = {
   origin: "*"
 };

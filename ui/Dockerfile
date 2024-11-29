@@ -1,4 +1,4 @@
-FROM node:22-slim as stage
+FROM node:22-slim AS stage
 
 WORKDIR /ui
 COPY package.json package-lock.json ./

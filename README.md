@@ -20,6 +20,8 @@ MYSQLDB_USER=root
 MYSQLDB_ROOT_PASSWORD=123456
 MYSQLDB_DATABASE=stock_db
 MYSQLDB_DOCKER_PORT=3306
+
+FINNHUB_TOKEN=<aquire from making an account at https://finnhub.io; or ping dev for https://share.doppler.com/ approach>
 ```
 
 ## How to start it? 
