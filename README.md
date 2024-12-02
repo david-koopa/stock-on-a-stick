@@ -69,4 +69,5 @@ docker compose up -d
 - Modify RWA to basic experience (enter user, watch stock(s))
 
 ### Rough Implementation to Branch From
-[!basic implementation](./resources/basic_impl.mp4)
+https://github.com/user-attachments/assets/5e37bdac-452b-4cd2-b165-6e320f09839f
+
