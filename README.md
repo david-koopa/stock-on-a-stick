@@ -67,3 +67,6 @@ docker compose up -d
 - ~Get Basic React Web App Up (use create-react-app from npx)~
 - ~Add RWA to Docker Compose~
 - Modify RWA to basic experience (enter user, watch stock(s))
+
+### Rough Implementation to Branch From
+[!basic implementation](./resources/basic_impl.mp4)
