@@ -5,7 +5,7 @@
 Stock Tracking Web App
 
 ## Rough Diagram
-[!Diagram](./resources/Screenshot%202024-12-02%20112436.png)
+![Diagram](./resources/Screenshot%202024-12-02%20112436.png)
 
 ## Prerequistes 
 
