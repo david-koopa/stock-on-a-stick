@@ -3,26 +3,24 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./app/models");
+const finnhubController = require('./app/finnhub');
 const app = express();
 
-// TODO clean up finnhub POC
-const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.FINNHUB_TOKEN}`);
+const { createServer } = require('node:http');
+const { Server } = require('socket.io');
 
-// Connection opened -> Subscribe
-socket.addEventListener('open', function (event) {
-    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AAPL'}))
-    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'NVDA'}))
-    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'HD'}))
-});
+const server = createServer(app);
+const io = new Server(server);
 
-// Listen for messages
-socket.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
-});
+let finnhubError, socket = finnhubController.initWebSocket()
 
-// Unsubscribe
- var unsubscribe = function(symbol) {
-    socket.send(JSON.stringify({'type':'unsubscribe','symbol': symbol}))
+// ['AMZN', 'APPL', 'NVDA'] dummy stocks for FE list
+
+if (finnhubError) {
+  console.dir(finnhubError)
+} else {
+  finnhubController.open(socket, 'APPL');
+  finnhubController.watch(socket, io);
 }
 
 var corsOptions = {
@@ -30,12 +28,12 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
 app.use(express.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+io.on('connection', (socket) => {
+  console.log('internal socket io is live!');
+})
 
 db.sequelize.sync()
   .then(() => {
@@ -45,20 +43,54 @@ db.sequelize.sync()
     console.log("Failed to sync db: " + err.message);
   });
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to this application." });
-});
-
-const User = db.user;
+const { User, UserStock } = db.user;
 const Op = db.Sequelize.Op;
+
+// Create and Save a new User
+app.post("/watch", (req, res) => {
+
+  // Validate request
+  if (!req.body.user_id) {
+    res.status(400).send({
+      message: "User cannot be missing!"
+    });
+    return;
+  }
+
+  if (!req.body.stock_symbol) {
+    res.status(400).send({
+      message: "Stock Symbol cannot be missing!"
+    });
+    return;
+  }
+
+  // Create a UserStock
+  const userStock = {
+    user_id: req.body.user_id,
+    stock_symbol: req.body.stock_symbol,
+    stock_watched: new Date(),
+  };
+
+  // Save UserStock in the database
+  UserStock.create(userStock)
+    .then(data => {
+      finnhubController.subscribe(socket, req.body.stock_symbol);
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the User."
+      });
+    });
+});
 
 // Create and Save a new User
 app.post("/user", (req, res) => {
   // Validate request
   if (!req.body.first_name) {
     res.status(400).send({
-      message: "First name can not be missing!"
+      message: "First name cannot be missing!"
     });
     return;
   }
@@ -101,6 +133,6 @@ app.get("/user", (req, res) => {
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });

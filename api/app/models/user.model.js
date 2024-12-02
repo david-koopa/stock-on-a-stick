@@ -15,14 +15,15 @@ module.exports = (sequelize, Sequelize) => {
       },
       stock_watched: {
         type: Sequelize.DATE
-      }
-    });
-  
-    UserStock.hasOne(User, {
-      foreignKey: 'user_id',
+      },
+      user_id : {
+        type: Sequelize.INTEGER,
+        references: {
+            model: User,
+            key: 'id'
+        }
+    }
     });
     
-    User.belongsTo(UserStock)
-  
     return { User, UserStock };
   };

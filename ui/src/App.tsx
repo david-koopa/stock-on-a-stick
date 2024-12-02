@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:6868', {
+  transports: ["websocket"],
+  reconnection: false
+})
 
 interface User {
   first_name: string;
@@ -20,7 +26,15 @@ function App() {
     .catch(function (error) {
       console.log(error);
     });
-  }, [])
+  }, []);
+
+  useEffect(() => {
+
+    socket.on('stock', (data) =>{
+      console.log(data);
+    })
+
+  }, []);
 
 
   return (
