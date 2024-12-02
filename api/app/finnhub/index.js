@@ -1,7 +1,7 @@
 const initWebSocket = () => {
 
     if (!process.env.FINNHUB_TOKEN) {
-        Error('FINNHUB_TOKEN missing. Will not subscribe to Finnhub API.'), null
+        return Error('FINNHUB_TOKEN missing. Will not subscribe to Finnhub API.'), null
     }
 
     // does not work on weekends .... market down :(
@@ -29,7 +29,7 @@ const watch = (socket, io) => {
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
-        io.emit('stock', event.data); // send data between server and UI
+        io.emit('stock', JSON.parse(event.data)); // send data between server and UI
     });
 }
 

@@ -15,6 +15,7 @@ interface User {
 
 function App() {
 
+  const [stocks, setStocks] = React.useState({});
   const [users, setUsers] = React.useState<Array<User>>([]);
 
   useEffect(() => {
@@ -32,6 +33,13 @@ function App() {
 
     socket.on('stock', (data) =>{
       console.log(data);
+      const latestStockData = data.data.pop();
+      const symbol = latestStockData["s"];
+      const price = latestStockData["p"];
+      setStocks({
+        ...stocks,
+        [`${symbol}`]: price
+      })
     })
 
   }, []);
@@ -47,6 +55,9 @@ function App() {
             )
           })}
         </ol>
+        <div>
+          {JSON.stringify(stocks)}
+        </div>
       </header>
     </div>
   );
