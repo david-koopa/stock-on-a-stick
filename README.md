@@ -63,10 +63,10 @@ docker compose up -d
 ```
 
 ### (ignore, personal notes) Next steps
-- Setup integration with Stock API (finnhub)
-- Setup basic routes (get stock info for stock X, list available stocks)
-- Update Prereq to make sure we get token, add to env
-- Setup Either long polling or web socket (pref) to watch stock(s) for user
+- ~Setup integration with Stock API (finnhub)~
+- ~Setup basic routes (get stock info for stock X, list available stocks)~
+- ~Update Prereq to make sure we get token, add to env~
+- ~Setup Either long polling or web socket (pref) to watch stock(s) for user~
 - ~Get Basic React Web App Up (use create-react-app from npx)~
 - ~Add RWA to Docker Compose~
 - Modify RWA to basic experience (enter user, watch stock(s))
@@ -74,3 +74,13 @@ docker compose up -d
 ### Rough Implementation to Branch From
 https://github.com/user-attachments/assets/5e37bdac-452b-4cd2-b165-6e320f09839f
 
+1. Create a user
+2. Follow stocks (default NASDAQ)
+
+Possible Features
+1. See and Follow "popular" stocks (simple most user count on user_stock table)
+2. Disable View during weekend (when market is down)
+3. Swap between markets (NASDAQ, NYSE, Crypto, etc)
+4. Show stocks for users on load ... right now it is kind of basic and only watches when you add
+5. Add ability to unsubscribe / stop watching stock 
+6. Graphs

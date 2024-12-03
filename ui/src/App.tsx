@@ -8,31 +8,13 @@ const socket = io('http://localhost:6868', {
   reconnection: false
 })
 
-interface User {
-  first_name: string;
-  last_name: string;
-}
-
 function App() {
 
   const [stocks, setStocks] = React.useState({});
-  const [users, setUsers] = React.useState<Array<User>>([]);
-
-  useEffect(() => {
-    axios.get('http://localhost:6868/user')
-    .then(function (users) {
-      console.log(users.data);
-      setUsers(users.data)
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }, []);
-
+  const [userInput, setUserInput] = React.useState('');
   useEffect(() => {
 
-    socket.on('stock', (data) =>{
-      console.log(data);
+    socket.on('watchlist', (data) =>{
       const latestStockData = data.data.pop();
       const symbol = latestStockData["s"];
       const price = latestStockData["p"];
@@ -44,17 +26,29 @@ function App() {
 
   }, []);
 
+  const submitStock = (input: string) => {
+  
+    const payload = {
+      stock_symbol: input
+    };
+
+    axios.post('http://localhost:6868/watch', payload).then(data => {
+      setUserInput('');
+    });
+
+  }
+
 
   return (
     <div className="App">
       <header className="App-header">
-        <ol>
-          {users.map(user => {
-            return (
-              <li>{user.first_name}</li>
-            )
-          })}
-        </ol>
+        <div>
+          <input type="text" value={userInput} 
+          onChange={(e) => setUserInput(e.target.value)}
+          />
+          <button onClick={() => submitStock(userInput)}>watch</button>
+        </div>
+        {/* Add Stock Component */}
         <div>
           {JSON.stringify(stocks)}
         </div>

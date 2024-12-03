@@ -8,14 +8,6 @@ const initWebSocket = () => {
     return null, new WebSocket(`wss://ws.finnhub.io?token=${process.env.FINNHUB_TOKEN}`);
 }
 
-const open = (socket, stock) => {
-    // subscribe to stock
-    socket.onopen = ((event) => {
-        socket.send(JSON.stringify({'type':'subscribe', 'symbol': stock}));
-    });
-
-}
-
 const subscribe = (socket, stock) => {
     socket.send(JSON.stringify({'type':'subscribe', 'symbol': stock}));
 }
@@ -29,10 +21,16 @@ const watch = (socket, io) => {
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
-        io.emit('stock', JSON.parse(event.data)); // send data between server and UI
+
+        // do nothing on ping
+        if (event.data["type"] == "ping") {
+            return;
+        }
+
+        io.emit('watchlist', JSON.parse(event.data)); // send data between server and UI
     });
 }
 
 module.exports = { 
-    initWebSocket, open, subscribe, unsubscribe, watch
+    initWebSocket, subscribe, unsubscribe, watch
 }

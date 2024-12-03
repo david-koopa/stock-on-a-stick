@@ -15,11 +15,11 @@ const io = new Server(server);
 let finnhubError, socket = finnhubController.initWebSocket()
 
 // ['AMZN', 'APPL', 'NVDA'] dummy stocks for FE list
+// todo get stocks on startup and subscribe
 
 if (finnhubError) {
   console.dir(finnhubError)
 } else {
-  finnhubController.open(socket, 'APPL');
   finnhubController.watch(socket, io);
 }
 
@@ -43,20 +43,12 @@ db.sequelize.sync()
     console.log("Failed to sync db: " + err.message);
   });
 
-const { User, UserStock } = db.user;
-const Op = db.Sequelize.Op;
+const { Watchlist } = db.watchlist;
 
 // Create and Save a new User
 app.post("/watch", (req, res) => {
 
   // Validate request
-  if (!req.body.user_id) {
-    res.status(400).send({
-      message: "User cannot be missing!"
-    });
-    return;
-  }
-
   if (!req.body.stock_symbol) {
     res.status(400).send({
       message: "Stock Symbol cannot be missing!"
@@ -65,14 +57,13 @@ app.post("/watch", (req, res) => {
   }
 
   // Create a UserStock
-  const userStock = {
-    user_id: req.body.user_id,
+  const stock = {
     stock_symbol: req.body.stock_symbol,
     stock_watched: new Date(),
   };
 
   // Save UserStock in the database
-  UserStock.create(userStock)
+  Watchlist.create(stock)
     .then(data => {
       finnhubController.subscribe(socket, req.body.stock_symbol);
       res.send(data);
@@ -81,52 +72,6 @@ app.post("/watch", (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the User."
-      });
-    });
-});
-
-// Create and Save a new User
-app.post("/user", (req, res) => {
-  // Validate request
-  if (!req.body.first_name) {
-    res.status(400).send({
-      message: "First name cannot be missing!"
-    });
-    return;
-  }
-
-  // Create a User
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name || null,
-  };
-
-  // Save User in the database
-  User.create(user)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the User."
-      });
-    });
-});
-
-// Retrieve all Users from the database.
-app.get("/user", (req, res) => {
-  const first_name = req.query.first_name;
-  var condition = first_name ? { first_name: { [Op.like]: `%${first_name}%` } } : null;
-
-  User.findAll({ where: condition })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving your users."
       });
     });
 });
