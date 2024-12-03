@@ -21,13 +21,14 @@ const watch = (socket, io) => {
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
+        const parsed = JSON.parse(event.data);
 
         // do nothing on ping
         if (event.data["type"] == "ping") {
             return;
         }
-
-        io.emit('watchlist', JSON.parse(event.data)); // send data between server and UI
+        console.log(`emitting from ${parsed["data"][0]["s"]}`)
+        io.emit(parsed["data"][0]["s"], parsed); // send data between server and UI
     });
 }
 

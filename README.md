@@ -6,6 +6,7 @@ Stock Tracking Web App
 
 ## Rough Diagram
 ![Diagram](./resources/Screenshot%202024-12-02%20112436.png)
+Originally had a plan to have multiple users with different stocks, but removed that to just get something done. 
 
 ## Prerequistes 
 
@@ -40,8 +41,7 @@ docker compose up -d
 Browse to `http://localhost:8888/`.
 
 ### API routes
-- GET - localhost:6868/user (get list of current users)
-- POST - localhost:6868/user (create single user)
+- POST - localhost:6868/watch (add a stock to watch, must be in NASDAQ)
 
 ### Webapp routes
 - http://localhost:8888 (home)
@@ -50,7 +50,7 @@ Browse to `http://localhost:8888/`.
 Bash into container or user Docker Desktop. Access stock_db with `mysql` command (password is whatever you set in .env). Password is whatever you set in .env file.
 
 ```
-mysql -p stock_db
+mysql -p
 ```
 
 Should get a `mysql>` terminal up to run `SHOW`, `SELECT`, etc.
@@ -74,13 +74,13 @@ docker compose up -d
 ### Rough Implementation to Branch From
 https://github.com/user-attachments/assets/5e37bdac-452b-4cd2-b165-6e320f09839f
 
-1. Create a user
-2. Follow stocks (default NASDAQ)
+1. Follow stocks (default NASDAQ)
 
-Possible Features
-1. See and Follow "popular" stocks (simple most user count on user_stock table)
+Future Features
+1. See and Follow "popular" stocks (simple most user count on user_stock table, if we integrate user table back in)
 2. Disable View during weekend (when market is down)
 3. Swap between markets (NASDAQ, NYSE, Crypto, etc)
 4. Show stocks for users on load ... right now it is kind of basic and only watches when you add
 5. Add ability to unsubscribe / stop watching stock 
 6. Graphs
+7. Improved Input that shows available stocks (maybe swap for option / select)

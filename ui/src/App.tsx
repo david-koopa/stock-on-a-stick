@@ -1,29 +1,17 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:6868', {
-  transports: ["websocket"],
-  reconnection: false
-})
+import Watchlist from './components/Watchlist';
 
 function App() {
 
-  const [stocks, setStocks] = React.useState({});
+  const [isMarketDown, setIsMarketDown] = React.useState<boolean>(true);
+  const [stocks, setStocks] = React.useState<Array<string>>([]);
   const [userInput, setUserInput] = React.useState('');
+
   useEffect(() => {
-
-    socket.on('watchlist', (data) =>{
-      const latestStockData = data.data.pop();
-      const symbol = latestStockData["s"];
-      const price = latestStockData["p"];
-      setStocks({
-        ...stocks,
-        [`${symbol}`]: price
-      })
-    })
-
+    // todo look at finnhub and see status of market 
+    setIsMarketDown(false);
   }, []);
 
   const submitStock = (input: string) => {
@@ -33,7 +21,8 @@ function App() {
     };
 
     axios.post('http://localhost:6868/watch', payload).then(data => {
-      setUserInput('');
+      setStocks([...stocks, input]);
+      setUserInput(''); // clear input on success
     });
 
   }
@@ -48,10 +37,7 @@ function App() {
           />
           <button onClick={() => submitStock(userInput)}>watch</button>
         </div>
-        {/* Add Stock Component */}
-        <div>
-          {JSON.stringify(stocks)}
-        </div>
+        { isMarketDown ? <></>: stocks.map(stock => <Watchlist stock={stock}/>) }
       </header>
     </div>
   );
