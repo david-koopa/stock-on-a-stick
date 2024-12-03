@@ -9,8 +9,7 @@ Stock Tracking Web App (proof of concept)
 Originally had a plan to have multiple users with different stocks, but removed that to just get something done. 
 
 ## Rough Implementation 
-
-![Diagram](./resources/Screen%20Recording%202024-12-03%20102836.mp4)
+![Video](./resources/Screen%20Recording%202024-12-03%20102836.mp4)
 Searching for a basic stock and getting it in a live feed, using the finnhub API.
 
 ## Prerequistes 
